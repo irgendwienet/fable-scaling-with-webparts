@@ -4,10 +4,12 @@
   </PropertyGroup>
   <ItemGroup> 
     <Compile Include="Extensions.fs" /> 
+    <Compile Include="GlobalTypes.fs" /> 
+    <Compile Include="WebPart.fs" /> 
     <Compile Include="Pages\Counter.fs" /> 
     <Compile Include="Pages\Loader.fs" /> 
     <Compile Include="Pages\Settings.fs" /> 
-    <Compile Include="GlobalTypes.fs" />
+    <Compile Include="WebPartRegistry.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />

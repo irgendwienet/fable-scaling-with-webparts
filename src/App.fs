@@ -10,52 +10,39 @@ let init (page:Page) =
     match page with
     | Counter ->
         let (submodel, submsg) = Counter.init()
-        let model = { CurrentPage = page; CurrentPageState = (CounterState submodel)}
-        let cmd  = Cmd.map CounterMsg submsg
+        let model = { CurrentPage = page; CurrentPageState = submodel}
+        let cmd  = Cmd.map WebPartMsg submsg
         model, cmd
 
     | Loader ->
         let (submodel, submsg) = Loader.init()
-        let model = { CurrentPage = page; CurrentPageState = (LoaderState submodel)}
-        let cmd  = Cmd.map LoaderMsg submsg
+        let model = { CurrentPage = page; CurrentPageState = submodel}
+        let cmd  = Cmd.map WebPartMsg submsg
         model, cmd
 
     | Settings ->
         let (submodel, submsg) = Settings.init()
-        let model = { CurrentPage = page; CurrentPageState = (SettingsState submodel)}
-        let cmd  = Cmd.map SettingMsg submsg
+        let model = { CurrentPage = page; CurrentPageState = submodel}
+        let cmd  = Cmd.map WebPartMsg submsg
         model, cmd
 
 let update msg prevState =
-    match msg, prevState.CurrentPageState with
-    | CounterMsg counterMsg, CounterState prevCounterState ->
-        let nextCounterState, nextCounterCmd = Counter.update counterMsg prevCounterState
-        let nextState = { prevState with CurrentPageState = (CounterState nextCounterState) }
-        nextState, Cmd.map CounterMsg nextCounterCmd
+    match msg with
+    | WebPartMsg msg ->
+        let next = WebPartRegistry.WebParts.TryUpdate msg prevState
 
-    | LoaderMsg loaderMsg, LoaderState prevLoaderState ->
-        let nextLoaderState, nextLoaderCmd = Loader.update loaderMsg prevLoaderState
-        let nextState = { prevState with CurrentPageState = (LoaderState nextLoaderState) }
-        nextState, Cmd.map LoaderMsg nextLoaderCmd
+        match next with
+        | Some (nextModel, nextCmd) -> nextModel, nextCmd
+        | None -> prevState, Cmd.none
 
-    | SettingMsg settingMsg, SettingsState prevSettingState ->
-        let nextSettingState, nextSettingCmd = Settings.update settingMsg prevSettingState
-        let nextState = { prevState with CurrentPageState = (SettingsState nextSettingState) }
-        nextState, Cmd.map SettingMsg nextSettingCmd
-
-    | NavigateTo page, _ ->
+    | NavigateTo page ->
         if prevState.CurrentPage = page then
             prevState, Cmd.none
         else
             init page
 
-    | _, _ ->
-        // TODO log
-        prevState, Cmd.none
-
 let divider =
     div [ Style [ MarginTop 20; MarginBottom 20 ] ] [ ]
-
 
 let render state dispatch =
 
@@ -69,11 +56,11 @@ let render state dispatch =
               [ str title ]
         ]
 
-    let currentPage =
-        match state.CurrentPageState with
-        | CounterState s -> Counter.view s (CounterMsg >> dispatch)
-        | LoaderState s -> Loader.view s (LoaderMsg >> dispatch)
-        | SettingsState s -> Settings.view s (SettingMsg >> dispatch)
+    let pageView =
+        let subView = WebPartRegistry.WebParts.TryRender state dispatch
+        match subView with
+        | Some view -> view
+        | None -> div [][ str "empty" ]
 
     div [ Style [ Padding 20 ] ] [
         h1 [ ] [ str "Lonely Siblings :(" ]
@@ -86,7 +73,7 @@ let render state dispatch =
         ]
 
         divider
-        currentPage
+        pageView
     ]
 
 

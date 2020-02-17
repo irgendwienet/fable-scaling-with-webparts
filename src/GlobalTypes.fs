@@ -1,24 +1,20 @@
 ﻿module GlobalTypes
 
+type AnyPageState = obj
+type AnyPageMsg = obj
+
 type Page =
     | Counter
     | Loader
     | Settings
 
-type PageState =
-    | CounterState of Counter.State
-    | LoaderState of Loader.State
-    | SettingsState of Settings.State
-
 type State = {
     CurrentPage : Page
-    CurrentPageState : PageState
+    CurrentPageState : AnyPageState
 }
 
 type Message =
-    | CounterMsg of Counter.Msg
-    | LoaderMsg of Loader.Msg
-    | SettingMsg of Settings.Msg
+    | WebPartMsg of AnyPageMsg
     | NavigateTo of Page
 
 

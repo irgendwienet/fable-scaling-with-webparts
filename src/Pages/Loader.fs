@@ -4,6 +4,7 @@ open Elmish
 open Fable.Helpers.React.Props
 open Fable.Helpers.React
 
+open WebPart
 
 type State =
     | Initial
@@ -50,3 +51,8 @@ let view state dispatch =
         div [ ]
             [ h3 [ ] [ str data ]
               makeButton (fun _ -> dispatch Reset) "Reset" ]
+
+let WebPart = {
+    Update = update
+    View = view
+}

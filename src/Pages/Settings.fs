@@ -4,6 +4,7 @@ open Elmish
 open Fable.Helpers.React.Props
 open Fable.Helpers.React
 
+open WebPart
 
 type State = SelectedCountFactor of int
 
@@ -37,3 +38,7 @@ let view state dispatch =
         factorBtn 10
     ]
 
+let WebPart = {
+    Update = update
+    View = view
+}
