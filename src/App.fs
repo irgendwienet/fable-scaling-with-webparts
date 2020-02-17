@@ -4,65 +4,54 @@ open Elmish
 open Elmish.React
 open Fable.Helpers.React
 open Fable.Helpers.React.Props
+open GlobalTypes
 
-type Page =
-    | Counter
-    | Loader
-    | Settings
+let init (page:Page) =
+    match page with
+    | Counter ->
+        let (submodel, submsg) = Counter.init()
+        let model = { CurrentPage = page; CurrentPageState = (CounterState submodel)}
+        let cmd  = Cmd.map CounterMsg submsg
+        model, cmd
 
-type State = {
-    CurrentPage : Page
-    Counter : Counter.State
-    Loader : Loader.State
-    Settings : Settings.State
-}
+    | Loader ->
+        let (submodel, submsg) = Loader.init()
+        let model = { CurrentPage = page; CurrentPageState = (LoaderState submodel)}
+        let cmd  = Cmd.map LoaderMsg submsg
+        model, cmd
 
-type Message =
-    | CounterMsg of Counter.Msg
-    | LoaderMsg of Loader.Msg
-    | SettingMsg of Settings.Msg
-    | NavigateTo of Page
-
-let init() =
-    let initCounter, counterCmd = Counter.init()
-    let initLoader, loaderCmd = Loader.init()
-    let initSettings, settingsCmd = Settings.init()
-    let initState = {
-        Counter = initCounter
-        Loader = initLoader
-        Settings = initSettings
-        CurrentPage = Counter
-    }
-
-    let initCmd = Cmd.batch [
-        Cmd.map CounterMsg counterCmd
-        Cmd.map LoaderMsg loaderCmd
-        Cmd.map SettingMsg settingsCmd
-    ]
-
-    initState, initCmd
+    | Settings ->
+        let (submodel, submsg) = Settings.init()
+        let model = { CurrentPage = page; CurrentPageState = (SettingsState submodel)}
+        let cmd  = Cmd.map SettingMsg submsg
+        model, cmd
 
 let update msg prevState =
-    match msg with
-    | CounterMsg counterMsg ->
-        let nextCounterState, nextCounterCmd = Counter.update counterMsg prevState.Counter
-        let nextState = { prevState with Counter = nextCounterState }
+    match msg, prevState.CurrentPageState with
+    | CounterMsg counterMsg, CounterState prevCounterState ->
+        let nextCounterState, nextCounterCmd = Counter.update counterMsg prevCounterState
+        let nextState = { prevState with CurrentPageState = (CounterState nextCounterState) }
         nextState, Cmd.map CounterMsg nextCounterCmd
 
-    | LoaderMsg loaderMsg ->
-        let nextLoaderState, nextLoadecCmd = Loader.update loaderMsg prevState.Loader
-        let nextState = { prevState with Loader = nextLoaderState }
-        nextState, Cmd.map LoaderMsg nextLoadecCmd
+    | LoaderMsg loaderMsg, LoaderState prevLoaderState ->
+        let nextLoaderState, nextLoaderCmd = Loader.update loaderMsg prevLoaderState
+        let nextState = { prevState with CurrentPageState = (LoaderState nextLoaderState) }
+        nextState, Cmd.map LoaderMsg nextLoaderCmd
 
-    | SettingMsg settingMsg ->
-        // TODO, propagate messages
-        let nextSettings, settingCmd = Settings.update settingMsg prevState.Settings
-        let nextState = { prevState with Settings = nextSettings }
-        nextState, Cmd.map SettingMsg settingCmd
+    | SettingMsg settingMsg, SettingsState prevSettingState ->
+        let nextSettingState, nextSettingCmd = Settings.update settingMsg prevSettingState
+        let nextState = { prevState with CurrentPageState = (SettingsState nextSettingState) }
+        nextState, Cmd.map SettingMsg nextSettingCmd
 
-    | NavigateTo page ->
-        let nextState = { prevState with CurrentPage = page }
-        nextState, Cmd.none
+    | NavigateTo page, _ ->
+        if prevState.CurrentPage = page then
+            prevState, Cmd.none
+        else
+            init page
+
+    | _, _ ->
+        // TODO log
+        prevState, Cmd.none
 
 let divider =
     div [ Style [ MarginTop 20; MarginBottom 20 ] ] [ ]
@@ -81,10 +70,10 @@ let render state dispatch =
         ]
 
     let currentPage =
-        match state.CurrentPage with
-        | Page.Counter -> Counter.view state.Counter (CounterMsg >> dispatch)
-        | Page.Loader -> Loader.view state.Loader (LoaderMsg >> dispatch)
-        | Page.Settings -> Settings.view state.Settings (SettingMsg >> dispatch)
+        match state.CurrentPageState with
+        | CounterState s -> Counter.view s (CounterMsg >> dispatch)
+        | LoaderState s -> Loader.view s (LoaderMsg >> dispatch)
+        | SettingsState s -> Settings.view s (SettingMsg >> dispatch)
 
     div [ Style [ Padding 20 ] ] [
         h1 [ ] [ str "Lonely Siblings :(" ]
@@ -101,6 +90,6 @@ let render state dispatch =
     ]
 
 
-Program.mkProgram init update render
+Program.mkProgram (fun () -> init Counter) update render
 |> Program.withReact "root"
 |> Program.run

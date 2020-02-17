@@ -3,10 +3,11 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup> 
-    <Compile Include="Extensions.fs" />
-    <Compile Include="Counter.fs" />
-    <Compile Include="Loader.fs" />
-    <Compile Include="Settings.fs" />
+    <Compile Include="Extensions.fs" /> 
+    <Compile Include="Pages\Counter.fs" /> 
+    <Compile Include="Pages\Loader.fs" /> 
+    <Compile Include="Pages\Settings.fs" /> 
+    <Compile Include="GlobalTypes.fs" />
     <Compile Include="App.fs" />
   </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />
