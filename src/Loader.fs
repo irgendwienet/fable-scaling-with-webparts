@@ -1,37 +1,37 @@
-module Loader 
+module Loader
 
-open Elmish 
-open Fable.Helpers.React.Props 
-open Fable.Helpers.React 
+open Elmish
+open Fable.Helpers.React.Props
+open Fable.Helpers.React
 
 
-type State = 
-    | Initial 
-    | Loading 
-    | Loaded of string 
+type State =
+    | Initial
+    | Loading
+    | Loaded of string
 
-type Msg = 
+type Msg =
     | StartLoading
-    | LoadedData  of string 
-    | Reset 
+    | LoadedData  of string
+    | Reset
 
 let init() = State.Initial, Cmd.none
 
-let update msg state = 
-    match msg with 
-    | StartLoading -> 
-        let nextState = State.Loading 
+let update msg state =
+    match msg with
+    | StartLoading ->
+        let nextState = State.Loading
         let nextCmd = Cmd.afterTimeout 1000 (LoadedData  "Data is loaded")
-        nextState, nextCmd 
+        nextState, nextCmd
 
-    | LoadedData data -> 
-        let nextState = State.Loaded data 
-        nextState, Cmd.none 
-         
+    | LoadedData data ->
+        let nextState = State.Loaded data
+        nextState, Cmd.none
+
     | Reset ->
-        State.Initial, Cmd.none 
+        State.Initial, Cmd.none
 
-let spinner = 
+let spinner =
     div [  ] [
         span [ ] [
             i [ ClassName "fa fa-circle-notch fa-spin fa-2x" ] [ ]
@@ -40,13 +40,13 @@ let spinner =
 
 
 
-let view state dispatch = 
-    match state with 
+let view state dispatch =
+    match state with
     | State.Initial ->
         makeButton (fun _ -> dispatch StartLoading) "Start Loading"
     | State.Loading ->
-        spinner 
+        spinner
     | State.Loaded data ->
-        div [ ] 
+        div [ ]
             [ h3 [ ] [ str data ]
-              makeButton (fun _ -> dispatch Reset) "Reset" ] 
+              makeButton (fun _ -> dispatch Reset) "Reset" ]
