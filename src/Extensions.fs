@@ -1,9 +1,8 @@
 [<AutoOpen>]
 module Extensions
 
-open Fable.Import.Browser
-open Fable.Helpers.React.Props
-open Fable.Helpers.React
+open Fable.React.Props
+open Fable.React
 
 open Elmish
 

@@ -2,7 +2,7 @@
 
 open GlobalTypes
 open Elmish
-open Fable.Import.React
+open Fable.React
 
 type AllWebpartFunctions =
     {

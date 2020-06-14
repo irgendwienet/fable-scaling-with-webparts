@@ -1,9 +1,10 @@
 module App
 
+open FSharp.Core
 open Elmish
 open Elmish.React
-open Fable.Helpers.React
-open Fable.Helpers.React.Props
+open Fable.React
+open Fable.React.Props
 open GlobalTypes
 
 let init (page:Page) =
@@ -78,5 +79,5 @@ let render state dispatch =
 
 
 Program.mkProgram (fun () -> init Counter) update render
-|> Program.withReact "root"
+|> Program.withReact "elmish-app"
 |> Program.run

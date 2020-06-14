@@ -1,33 +1,23 @@
-# Fable Getting Started
+# Elmish Getting Started
 
-This is basically the simplest Fable client app you can get.
-It just writes `Hello World` to the console.
-After building it you will find a html and a js file in the `public` folder as build result.
+This is a simple Fable application including an [Elmish](https://elmish.github.io/) counter. The repository is made for learning purposes and the generated Javascript output is not optimized. That said, the template shows you how easy it is to get started with Fable and Elmish using minimal configuration.
 
-Requirements
+## Building and running the app
 
- - [.NET Core](https://www.microsoft.com/net/download) 2.1+
- - [Mono](https://www.mono-project.com/download/stable/) 5.0+ on non-windows machines
- - [Node.js](https://nodejs.org/en/) 10.0+ 
+First of all, start with installing the project's npm dependencies
+```bash
+npm install
+```
+Once this is finished, you can then build and compile the project:
+```
+npm run build
+```
+You can start developing the application in watch mode using the webpack development server:
+```
+npm start
+```
+After the first compilation is finished, navigate to http://localhost:8080 in your browser to see the application.
 
-### Windows
-In the main folder run the following commands.
+### VS Code
 
-for compiling the project
-```
-build
-```
-for compiling and the project and watching for file changes
-```
-build Watch
-```
-
-### Non-Windows
-Compiling the project
-```
-./build.sh 
-```
-Compiling and the project and watching for file changes
-```
-./build.sh Watch
-```
+If you happen to use Visual Studio Code, simply hitting F5 will start the development watch mode for you and opens your default browser navigating to http://localhost:8080.
