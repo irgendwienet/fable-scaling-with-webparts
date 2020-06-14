@@ -7,10 +7,13 @@ type AnyWebPartMsg = obj
 type Model = {
     Page : AnyPage
     PageModel : AnyWebPartModel
+
+    CurrentUser : string option
 }
 
 type GlobalMsg =
-    | CounterSettingChanged of int
+    | LoggedIn of string
+    | LoggedOut
 
 type Msg =
     | WebPartMsg of AnyWebPartMsg

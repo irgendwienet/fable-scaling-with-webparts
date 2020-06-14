@@ -29,12 +29,18 @@ let appStart() =
                      | _ -> Counter.Page.Counter :> AnyPage // default page for unknown urls
 
     let model = { Page = null
-                  PageModel = null }
+                  PageModel = null
+
+                  CurrentUser = None }
 
     handleUpdateUrl initalPage model
 
 let handleGlobalMsg msg model =
-    (model, Cmd.none)
+    match msg with
+    | LoggedIn user ->
+        ({model with CurrentUser = Some user}, (NavigateTo Settings.Page.Settings) |> Cmd.ofMsg )
+    | LoggedOut ->
+        ({model with CurrentUser = None}, Cmd.none)
 
 let renderPage model dispatch =
     let navigateTo = (fun page -> dispatch (NavigateTo page))

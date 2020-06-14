@@ -27,14 +27,33 @@ let main model dispatch children =
               [ str title ]
         ]
 
+    let loginintext =
+        match model.CurrentUser with
+        | Some user -> (sprintf "logged in as %s" user)
+        | None -> "not logged in"
+
     div [ Style [ Padding 20 ] ] [
         h1 [ ] [ model |> caption |> str ]
+        divider
+
+        p [] [ str loginintext
+               if (model.CurrentUser.IsSome) then
+                    makeButton (fun _ -> dispatch (GlobalMsg LoggedOut) ) "logout"
+        ]
+
+
+
         divider
 
         ul [ ClassName "nav nav-tabs" ] [
             navItem Counter.Page.Counter "Counter"
             navItem Loader.Page.Loader "Loader"
-            navItem Settings.Page.Settings "Settings"
+
+            if (model.CurrentUser.IsSome) then
+                navItem Settings.Page.Settings "Settings"
+
+            if (model.CurrentUser.IsNone) then
+                navItem Login.Page.Login "Login"
         ]
 
         divider

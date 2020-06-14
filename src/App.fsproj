@@ -9,6 +9,7 @@
     <Compile Include="Pages\Counter.fs" /> 
     <Compile Include="Pages\Loader.fs" /> 
     <Compile Include="Pages\Settings.fs" /> 
+    <Compile Include="Pages\Login.fs" /> 
     <Compile Include="WebPartRegistry.fs" /> 
     <Compile Include="Template.fs" /> 
     <Compile Include="Urls.fs" /> 

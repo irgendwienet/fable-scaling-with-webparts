@@ -11,4 +11,5 @@ let private AdminWebParts =
 
 let AllParts =
     [ UserWebParts
-      AdminWebParts ] |> Merge
+      AdminWebParts
+      Login.WebPart.Functions ] |> Merge

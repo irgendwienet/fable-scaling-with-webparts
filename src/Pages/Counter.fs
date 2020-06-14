@@ -48,7 +48,7 @@ let WebPart = {
 
     GetGlobalMsg = fun _ -> None
 
-    GetHeader = fun _ -> "Counter"
+    GetHeader = fun m -> sprintf "Counter (%i)" m.Count
 
     BuildUrl = fun _ -> [ "counter" ]
     ParseUrl =
