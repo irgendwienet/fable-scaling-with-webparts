@@ -1,20 +1,19 @@
 ﻿module GlobalTypes
 
-type AnyPageState = obj
-type AnyPageMsg = obj
+type AnyPage = obj
+type AnyWebPartModel = obj
+type AnyWebPartMsg = obj
 
-type Page =
-    | Counter
-    | Loader
-    | Settings
-
-type State = {
-    CurrentPage : Page
-    CurrentPageState : AnyPageState
+type Model = {
+    Page : AnyPage
+    PageModel : AnyWebPartModel
 }
 
-type Message =
-    | WebPartMsg of AnyPageMsg
-    | NavigateTo of Page
+type GlobalMsg =
+    | CounterSettingChanged of int
 
-
+type Msg =
+    | WebPartMsg of AnyWebPartMsg
+    | UrlUpdated of AnyPage
+    | NavigateTo of AnyPage
+    | GlobalMsg of GlobalMsg

@@ -5,23 +5,28 @@ open Fable.React.Props
 open Fable.React
 
 open WebPart
+open GlobalTypes
 
-type State = SelectedCountFactor of int
+type Model = SelectedCountFactor of int
+
+type Page =
+    | Settings
 
 type Msg =
     | ChangeFactor of int
 
-let init() = SelectedCountFactor 1, Cmd.none
+let init (page:Page) (lastModel:Model option) =
+    SelectedCountFactor 1, Cmd.none
 
-let update msg state =
+let update msg model =
     match msg with
     | ChangeFactor nextFactor ->
-        let nextState = SelectedCountFactor nextFactor
-        nextState, Cmd.none
+        let nextModel = SelectedCountFactor nextFactor
+        nextModel, Cmd.none
 
 
-let view state dispatch =
-    let (SelectedCountFactor currentFactor) = state
+let view model dispatch (navigateTo:AnyPage -> unit) =
+    let (SelectedCountFactor currentFactor) = model
     let factorBtn n =
       let buttonClass =
         if n = currentFactor
@@ -39,6 +44,17 @@ let view state dispatch =
     ]
 
 let WebPart = {
+    Init = init
     Update = update
     View = view
+
+    GetGlobalMsg = fun _ -> None
+
+    GetHeader = fun _ -> "Settings"
+
+    BuildUrl = fun _ -> [ "settings" ]
+    ParseUrl =
+        function
+        | [ "settings" ] -> Some Settings
+        | _ -> None
 }

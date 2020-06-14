@@ -2,13 +2,13 @@
 
 open WebPart
 
-let private AllWebParts =
-    [ Counter.WebPart.Calls
-      Loader.WebPart.Calls
-      Settings.WebPart.Calls ]
+let private UserWebParts =
+    [ Counter.WebPart.Functions
+      Loader.WebPart.Functions ] |> Merge
 
-let WebParts =
-    {
-        TryUpdate = fun msg state -> AllWebParts |> List.tryPick (fun x -> x.TryUpdate msg state)
-        TryRender = fun state dispatch -> AllWebParts |> List.tryPick (fun x -> x.TryRender state dispatch)
-    }
+let private AdminWebParts =
+    [ Settings.WebPart.Functions ] |> Merge
+
+let AllParts =
+    [ UserWebParts
+      AdminWebParts ] |> Merge

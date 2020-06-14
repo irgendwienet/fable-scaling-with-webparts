@@ -4,39 +4,55 @@ open Elmish
 open Fable.React.Props
 open Fable.React
 
+open GlobalTypes
 open WebPart
 
-type State = {
+type Model = {
     Count : int
     Factor : int
 }
+
+type Page =
+    | Counter
 
 type Msg =
     | Increment
     | Decrement
     | IncrementDelayed
 
-let init() = { Count = 0; Factor = 1 }, Cmd.none
+let init (page:Page) (lastModel:Model option) =
+    { Count = 0; Factor = 1 }, Cmd.none
 
-let update msg state =
+let update msg model =
     match msg with
-    | Increment -> { state with Count = state.Count + state.Factor }, Cmd.none
-    | Decrement -> { state with Count = state.Count - state.Factor }, Cmd.none
+    | Increment -> { model with Count = model.Count + model.Factor }, Cmd.none
+    | Decrement -> { model with Count = model.Count - model.Factor }, Cmd.none
     | IncrementDelayed ->
         let nextCmd = Cmd.afterTimeout 1000 Increment
-        state, nextCmd
+        model, nextCmd
 
-let view state dispatch =
+let view model dispatch (navigateTo:AnyPage -> unit) =
     div [  ] [
         makeButton (fun _ -> dispatch Increment) "Increment"
         makeButton (fun _ -> dispatch Decrement) "Decrement"
         makeButton (fun _ -> dispatch IncrementDelayed) "Increment Delayed"
 
         br [ ]
-        h1 [ Style [ MarginLeft 150 ] ] [ ofInt state.Count ]
+        h1 [ Style [ MarginLeft 150 ] ] [ ofInt model.Count ]
     ]
 
 let WebPart = {
+    Init = init
     Update = update
     View = view
+
+    GetGlobalMsg = fun _ -> None
+
+    GetHeader = fun _ -> "Counter"
+
+    BuildUrl = fun _ -> [ "counter" ]
+    ParseUrl =
+        function
+        | [ "counter" ] -> Some Counter
+        | _ -> None
 }

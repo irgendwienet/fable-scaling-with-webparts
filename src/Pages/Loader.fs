@@ -4,33 +4,38 @@ open Elmish
 open Fable.React.Props
 open Fable.React
 
+open GlobalTypes
 open WebPart
 
-type State =
+type Model =
     | Initial
     | Loading
     | Loaded of string
+
+type Page =
+    | Loader
 
 type Msg =
     | StartLoading
     | LoadedData  of string
     | Reset
 
-let init() = State.Initial, Cmd.none
+let init (page:Page) (lastModel:Model option) =
+    Model.Initial, Cmd.none
 
-let update msg state =
+let update msg model =
     match msg with
     | StartLoading ->
-        let nextState = State.Loading
+        let nextModel = Model.Loading
         let nextCmd = Cmd.afterTimeout 1000 (LoadedData  "Data is loaded")
-        nextState, nextCmd
+        nextModel, nextCmd
 
     | LoadedData data ->
-        let nextState = State.Loaded data
-        nextState, Cmd.none
+        let nextModel = Model.Loaded data
+        nextModel, Cmd.none
 
     | Reset ->
-        State.Initial, Cmd.none
+        Model.Initial, Cmd.none
 
 let spinner =
     div [  ] [
@@ -39,20 +44,29 @@ let spinner =
         ]
     ]
 
-
-
-let view state dispatch =
-    match state with
-    | State.Initial ->
+let view model dispatch (navigateTo:AnyPage -> unit) =
+    match model with
+    | Model.Initial ->
         makeButton (fun _ -> dispatch StartLoading) "Start Loading"
-    | State.Loading ->
+    | Model.Loading ->
         spinner
-    | State.Loaded data ->
+    | Model.Loaded data ->
         div [ ]
             [ h3 [ ] [ str data ]
               makeButton (fun _ -> dispatch Reset) "Reset" ]
 
 let WebPart = {
+    Init = init
     Update = update
     View = view
+
+    GetGlobalMsg = fun _ -> None
+
+    GetHeader = fun _ -> "Loading Data"
+
+    BuildUrl = fun _ -> [ "loader" ]
+    ParseUrl =
+        function
+        | [ "loader" ] -> Some Loader
+        | _ -> None
 }
